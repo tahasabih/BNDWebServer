@@ -1,33 +1,26 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/tahasabih/BNDBackEnd/GETS"
 	"net/http"
 )
 
-type payload struct {
-	data Data
+type Payload struct {
+	Stuff Data
 }
 
 type Data struct {
-	name map[string]string
-	age  map[int]string
+	Name Name
+	Age  Age
 }
 
-var a = make(map[string]string)
-var b = make(map[int]string)
+type Name map[string]string
+type Age map[string]int
 
 func main() {
-
-	a["taha"] = "Sabih"
-	a["jameel"] = "Rehman"
-	b[20] = "Twenty"
-	b[21] = "Twenty-One"
-
-	var c = Data(a, b)
-	var d = payload(c)
 
 	r := mux.NewRouter().StrictSlash(false)
 	r.HandleFunc("/", GETS.HomeHandler)
@@ -49,11 +42,26 @@ func main() {
 }
 
 func HomeHandler(rw http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(rw, "Home")
+	fmt.Fprintln(rw, "Hello")
 }
 
 func PostsIndexHandler(rw http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(rw, "posts index")
+	var a = make(map[string]string)
+	var b = make(map[string]int)
+	a["taha"] = "Sabih"
+	a["jameel"] = "Rehman"
+	b["Twenty"] = 20
+	b["Twenty-one"] = 21
+
+	var c = Data{a, b}
+	var d = Payload{c}
+	fmt.Println(d)
+	u, err := json.MarshalIndent(d, "", "  ")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Println(string(u))
+	fmt.Fprintln(rw, string(u))
 }
 
 func PostsCreateHandler(rw http.ResponseWriter, r *http.Request) {
