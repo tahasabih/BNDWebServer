@@ -3,8 +3,8 @@ package pgConnector
 import "testing"
 
 func TestGoConnect(t *testing.T) {
-	isConnected, err := Connect()
-	if isConnected != true {
+	_, err := Connect()
+	if err != nil {
 		t.Error(err)
 	}
 }
